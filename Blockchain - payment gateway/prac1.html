@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      margin: 0;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .payment-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      width: 820px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .payment-container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 26px;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .payment-options button {
+      width: 100%;
+      padding: 15px;
+      margin: 15px 0;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .payment-options button:hover {
+      background-color: #45a049;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .payment-section {
+      display: none;
+      margin-top: 20px;
+      font-size: 18px;
+      color: #444;
+    }
+
+    .payment-section input, .payment-section img {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .payment-section img {
+      max-width: 320px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-status {
+      font-size: 18px;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .payment-status.success {
+      background-color: #28a745;
+    }
+
+    .payment-status.failure {
+      background-color: #dc3545;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Responsive design for small screens */
+    @media (max-width: 500px) {
+      .payment-container {
+        width: 90%;
+        padding: 20px;
+      }
+
+      .payment-options button {
+        font-size: 16px;
+        padding: 12px;
+      }
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="payment-container">
+    <img src = "logo.png">
+    <h2>Pay Mitesh , Kavish and Vaibhav</h2>
+
+    <div class="payment-options">
+      <!-- The button now toggles between Collapse/Expand -->
+      <button id="cryptoButton" onclick="toggleSection('crypto')">Show Crypto Payment</button>
+    </div>
+
+    <!-- Crypto Section -->
+    <div class="payment-section" id="crypto">
+      <h3>Crypto Payment</h3>
+      <p>Scan the QR Code to pay with crypto.</p>
+      <img src="qrcode.png" alt="Crypto QR" />
+
+      <!-- Transaction Table below the QR Code -->
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction Hash</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-table-body">
+          <!-- Data will be populated here by the JavaScript -->
+        </tbody>
+      </table>
+
+      <p id="transaction-hash">Loading transaction hash...</p>
+    </div>
+
+    <!-- Transaction Status -->
+    <div class="payment-status" id="status">
+      <p></p>
+    </div>
+  </div>
+
+  <script>
+    const apiUrl = "https://eth-holesky.blockscout.com/api/v2/addresses/0xe7F14e1C5387037dfBe02EB25ACd3AA18802d3D7/transactions";
+
+    // Fetch transactions from the API
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Check if data.items exists and has items
+        if (data.items && data.items.length > 0) {
+          // Create an array of transaction details (hash and value)
+          const transactions = data.items.map(item => ({
+            hash: item.hash,
+            value: item.value
+          }));
+
+          // Display all the transactions in the table
+          const tableBody = document.getElementById('transaction-table-body');
+          tableBody.innerHTML = ""; // Clear any previous data
+
+          // Loop through each transaction and create table rows
+          transactions.forEach(transaction => {
+            const row = document.createElement("tr");
+
+            const hashCell = document.createElement("td");
+            hashCell.textContent = transaction.hash;
+            row.appendChild(hashCell);
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = (transaction.value / 1e18); // Assuming the value is in Wei and converting it to Ether
+            row.appendChild(valueCell);
+
+            // Append the row to the table
+            tableBody.appendChild(row);
+          });
+        } else {
+          // Handle case if no transactions are found
+          const tableBody = document.getElementById('transaction-table-body');
+          tableBody.innerHTML = "<tr><td colspan='2'>No transactions found.</td></tr>";
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching transactions:', error);
+        const tableBody = document.getElementById('transaction-table-body');
+        tableBody.innerHTML = "<tr><td colspan='2'>Error loading transaction data.</td></tr>";
+      });
+
+    // Toggle the visibility of the crypto section and change button text
+    function toggleSection(section) {
+      const sectionElement = document.getElementById(section);
+      const button = document.getElementById('cryptoButton');
+
+      if (sectionElement.style.display === 'none' || sectionElement.style.display === '') {
+        sectionElement.style.display = 'block';
+        button.textContent = 'Hide Crypto Payment'; // Change button text to Hide
+      } else {
+        sectionElement.style.display = 'none';
+        button.textContent = 'Show Crypto Payment'; // Change button text to Show
+      }
+    }
+  </script>
+
+</body>
+</html>
