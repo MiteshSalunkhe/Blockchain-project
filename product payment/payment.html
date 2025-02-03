@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <link rel="stylesheet" href="paymentt.css">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.9/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Payment Page</h1>
+    <div class="price-section">
+      <h2>Total Price: <span id="total-price">$0.00</span></h2>
+    </div>
+    <form action="/submit-payment" method="POST">
+      <div class="payment-options">
+        <h3>Select Payment Method:</h3>
+
+        <label>
+          <input type="radio" name="payment-method" value="credit-card" required>
+          Credit Card
+        </label>
+        <div id="credit-card-form" class="payment-form">
+          <label for="credit-card-number">Card Number:</label>
+          <input type="text" id="credit-card-number" name="credit-card-number" required placeholder="Enter your card number">
+          
+          <label for="expiry-date">Expiry Date:</label>
+          <input type="month" id="expiry-date" name="expiry-date" required>
+          
+          <label for="cvv">CVV:</label>
+          <input type="text" id="cvv" name="cvv" required placeholder="CVV">
+        </div>
+
+        <label>
+            <input type="radio" name="payment-method" value="ethereum">
+            Ethereum
+        </label>
+        <div id="ethereum-form" class="payment-form">
+            <label for="ethereum-address">Ethereum Address:</label>
+            <input type="text" id="ethereum-address" name="ethereum-address" required placeholder="Enter Ethereum address" readonly>
+            <button type="button" id="connect-wallet" onclick="connectWallet()">Connect to Wallet</button>
+        </div>
+        
+        <label>
+            <input type="radio" name="payment-method" value="bitcoin">
+            Bitcoin
+        </label>
+        <div id="bitcoin-form" class="payment-form">
+            <label for="bitcoin-address">Bitcoin Address:</label>
+            <input type="text" id="bitcoin-address" name="bitcoin-address" required placeholder="Enter Bitcoin address">
+        </div>
+      </div>
+      <button type="submit" class="pay-button">Proceed to Pay</button>
+    </form>
+  </div>
+
+  <script>
+    window.onload = function() {
+      // Retrieve totalPrice from localStorage
+      const totalPrice = localStorage.getItem('totalPrice');
+
+      // Update the total price in the payment page
+      if (totalPrice) {
+        document.getElementById('total-price').textContent = `$${totalPrice}`;
+      } else {
+        alert('No total price found.');
+      }
+    };
+    document.querySelectorAll('input[name="payment-method"]').forEach((radio) => {
+radio.addEventListener('change', function () {
+document.querySelectorAll('.payment-form').forEach(form => form.style.display = 'none');
+const selectedPaymentMethod = this.value;
+const formToDisplay = document.getElementById(`${selectedPaymentMethod}-form`);
+if (formToDisplay) {
+    formToDisplay.style.display = 'block';
+}
+});
+});
+
+document.querySelector('input[name="payment-method"]:checked')?.dispatchEvent(new Event('change'));
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          const userAddress = accounts[0];
+          document.getElementById('ethereum-address').value = userAddress;
+        } catch (error) {
+          alert("Connection failed. Please try again.");
+        }
+      } else {
+        alert("Please install MetaMask or an Ethereum-compatible wallet.");
+      }
+    }
+  </script>
+</body>
+</html>

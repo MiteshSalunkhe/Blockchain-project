@@ -1,0 +1,104 @@
+/* Main Content Styling */
+main {
+  padding: 20px;
+  display: flex; /* Flexbox layout for centering */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  flex-direction: column; /* Stack content vertically */
+  min-height: 100vh; /* Full height to center items within the viewport */
+  background: linear-gradient(to bottom, #f5f5f5, #ffffff);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Product List Container */
+.product-list {
+  display: flex; /* Flexbox layout */
+  justify-content: center; /* Center items horizontally */
+  flex-wrap: wrap; /* Wrap items to the next row if needed */
+  gap: 30px; /* Space between items */
+  margin-top: 20px;
+  max-width: 1200px; /* Set a maximum width for the product list */
+  width: 100%; /* Make the list full-width */
+}
+
+/* Individual Product Card Styling */
+.product {
+  background-color: #fff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px; /* Rounded corners */
+  width: 250px; /* Fixed width */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product:hover {
+  transform: translateY(-10px); /* Lift effect */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.product img {
+  width: 100%;
+  height: 150px; /* Larger height for images */
+  object-fit: cover;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.product img:hover {
+  transform: scale(1.05); /* Subtle zoom effect */
+}
+
+.product .product-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+}
+
+.product .product-price {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Button Styling */
+.product button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product button:hover {
+  background-color: #2980b9;
+  box-shadow: 0 6px 15px rgba(41, 128, 185, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-list {
+      justify-content: space-evenly;
+  }
+
+  .product {
+      width: 45%; /* Adjust card width */
+  }
+}
+
+@media (max-width: 480px) {
+  .product {
+      width: 90%; /* Full width for small screens */
+  }
+}
